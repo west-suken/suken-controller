@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css" />
+<body>
+  <div id="stop">
+    STOP
+  </div>
+  <script>
+
+    // WebSocket 接続を作成する
+const socket = new WebSocket('ws://10.19.68.122:12346');
+
+// 接続を開く
+socket.addEventListener('open', function (event) {
+  document.addEventListener('mousemove', event => {
+    const ex = event.clientX - window.innerWidth / 2
+    const ey = event.clientY - window.innerHeight / 2
+    if (Math.sqrt(ex ** 2 + ey ** 2) <= window.innerHeight * 0.15) {
+      console.log('stop')
+      socket.send('stop');
+      return
+    }
+    if (ey < 0) {
+      console.log('forward')
+      socket.send('forward')
+    } else {
+      console.log('backward')
+      socket.send('backward')
+    }
+    if (ex < 0) {
+      console.log('left')
+    } else {
+      console.log('right')
+    }
+  })
+    // socket.send('forward');
+    // setTimeout(() => {
+    //   socket.send('stop');
+    // }, 1000)
+});
+
+// メッセージを待ち受ける
+socket.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});
+  </script>
+</body>
+</html>

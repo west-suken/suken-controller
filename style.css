@@ -1,0 +1,17 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#stop {
+  border: 1px solid black;
+  width: 30vh;
+  height: 30vh;
+  border-radius: 30vh;
+  text-align: center;
+  background-color: red;
+  line-height: 30vh;
+}
