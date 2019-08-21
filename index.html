@@ -12,42 +12,51 @@
   </div>
   <script>
 
-    // WebSocket 接続を作成する
-const socket = new WebSocket('ws://10.19.68.122:12346');
+let currentCommand = ''
 
-// 接続を開く
-socket.addEventListener('open', function (event) {
-  document.addEventListener('mousemove', event => {
-    const ex = event.clientX - window.innerWidth / 2
-    const ey = event.clientY - window.innerHeight / 2
-    if (Math.sqrt(ex ** 2 + ey ** 2) <= window.innerHeight * 0.15) {
-      console.log('stop')
-      socket.send('stop');
-      return
-    }
-    if (ey < 0) {
-      console.log('forward')
-      socket.send('forward')
-    } else {
-      console.log('backward')
-      socket.send('backward')
-    }
-    if (ex < 0) {
-      console.log('left')
-    } else {
-      console.log('right')
-    }
-  })
-    // socket.send('forward');
-    // setTimeout(() => {
-    //   socket.send('stop');
-    // }, 1000)
-});
+function open(address) {
+  if (!address) address = 'ws://10.19.68.122:12346'
+  // WebSocket 接続を作成する
+  const socket = new WebSocket(address);
 
-// メッセージを待ち受ける
-socket.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
-});
+  // 接続を開く
+  socket.addEventListener('open', function (event) {
+  });
+
+  // メッセージを待ち受ける
+  socket.addEventListener('message', function (event) {
+      console.log('Message from server ', event.data);
+  });
+
+  // 1秒に1回送信
+  setInterval(() => {
+    if (currentCommand !== '') {
+      socket.send(currentCommand)
+    }
+  }, 1000)
+}
+
+document.addEventListener('mousemove', event => {
+  const ex = event.clientX - window.innerWidth / 2
+  const ey = event.clientY - window.innerHeight / 2
+  if (Math.sqrt(ex ** 2 + ey ** 2) <= window.innerHeight * 0.15) {
+    console.log('stop')
+    currentCommand = 'stop'
+    return
+  }
+  if (ey < 0) {
+    console.log('forward')
+    currentCommand = 'forward'
+  } else {
+    console.log('backward')
+    currentCommand = 'backward'
+  }
+  if (ex < 0) {
+    console.log('left')
+  } else {
+    console.log('right')
+  }
+})
   </script>
 </body>
 </html>
