@@ -12,10 +12,10 @@
   </div>
   <script>
 
-let currentCommand = ''
+let currentCommand = null
 
 function open(address) {
-  if (!address) address = 'ws://10.19.68.122:12346'
+  if (!address) address = 'ws://10.19.68.83:12346'
   // WebSocket 接続を作成する
   const socket = new WebSocket(address);
 
@@ -30,32 +30,27 @@ function open(address) {
 
   // 1秒に1回送信
   setInterval(() => {
-    if (currentCommand !== '') {
-      socket.send(currentCommand)
+    if (currentCommand !== null) {
+      socket.send(JSON.stringify(currentCommand))
     }
   }, 1000)
 }
+
+open()
 
 document.addEventListener('mousemove', event => {
   const ex = event.clientX - window.innerWidth / 2
   const ey = event.clientY - window.innerHeight / 2
   if (Math.sqrt(ex ** 2 + ey ** 2) <= window.innerHeight * 0.15) {
     console.log('stop')
-    currentCommand = 'stop'
+    currentCommand = { vertical: 0, horizontal: 0 }
     return
   }
-  if (ey < 0) {
-    console.log('forward')
-    currentCommand = 'forward'
-  } else {
-    console.log('backward')
-    currentCommand = 'backward'
-  }
-  if (ex < 0) {
-    console.log('left')
-  } else {
-    console.log('right')
-  }
+  currentCommand = {}
+  const y = -ey / (window.innerHeight / 2)
+  currentCommand.vertical = y
+  const x = 1 - ((ex + window.innerWidth / 2) / window.innerWidth)
+  currentCommand.horizontal = x
 })
   </script>
 </body>
